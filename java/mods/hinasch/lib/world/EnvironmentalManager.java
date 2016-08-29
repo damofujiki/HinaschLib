@@ -8,7 +8,7 @@ import com.google.common.collect.Sets;
 
 import mods.hinasch.lib.world.EnvironmentalManager.EnvironmentalCondition.Type;
 import mods.hinasch.unsaga.UnsagaMod;
-import mods.hinasch.unsaga.util.addon.hac.HeatAndClimateAgent;
+import mods.hinasch.unsaga.plugin.hac.HeatAndClimateAgent;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;

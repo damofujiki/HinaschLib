@@ -45,6 +45,9 @@ public class ComponentCapabilityAdapterItem<T> extends ComponentCapabilityAdapte
 			super(modid, name, parent);
 			// TODO 自動生成されたコンストラクター・スタブ
 		}
+		/**
+		 * IPreAttach (inst,capa,facing,ev)
+		 */
 		public void registerEvent(IPreAttach<T,AttachCapabilitiesEvent.Entity> preAttach){
 
 	    	HSLibs.registerEvent(new SimpleEntityCapabilityAttachEvent<T>(this.parent.parent.modid,this.isRequireSerialize,preAttach){

@@ -176,6 +176,14 @@ public class CapabilityInventory {
 			this.is = new ItemStack[this.getMaxStackSize()];
 		}
 
+		@Override
+		public ItemStack getStack(int index) {
+
+			return this.is[index];
+		}
+
+
+
 	}
 	public static interface IItemInventory extends IRequireInitializing{
 		public Iterable<ItemStack> getItemList();
@@ -186,5 +194,7 @@ public class CapabilityInventory {
 		public int getMaxStackSize();
 		public void setMaxStackSize(int size);
 		public void init();
+		public ItemStack getStack(int index);
+
 	}
 }

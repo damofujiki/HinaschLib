@@ -14,6 +14,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -73,6 +74,12 @@ public class SoundAndSFX {
 		}
 
 
+	}
+
+	public static void playPlayerSound(SoundEvent soundIn, SoundCategory category, float volume, float pitch, boolean distanceDelay)
+	{
+		EntityPlayer p = ClientHelper.getPlayer();
+		playSound(ClientHelper.getWorld(),p.posX,p.posY,p.posZ,soundIn,category,volume,pitch,distanceDelay);
 	}
 	/**
 	 *
