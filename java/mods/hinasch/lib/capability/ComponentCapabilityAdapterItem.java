@@ -10,12 +10,17 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 
 public class ComponentCapabilityAdapterItem<T> extends ComponentCapabilityAdapter<T,AttachCapabilitiesEvent.Item,ItemStack>{
 
-	public ComponentCapabilityAdapterItem(String modid, String name, CapabilityAdapterBase parent) {
+	public ComponentCapabilityAdapterItem(String modid, String name, CapabilityAdapterFrame parent) {
 		super(modid, name, parent);
 		// TODO 自動生成されたコンストラクター・スタブ
 	}
 
-	public void registerEvent(IPreAttach<T,AttachCapabilitiesEvent.Item> preAttach){
+	/**
+	 * Capabilityの初期化イベントを追加したい場合はこれで追加。
+	 * 例：
+	 * ((inst,capa,face,ev) -> {～～～～})
+	 */
+	public void registerAttachEvent(IPreAttach<T,AttachCapabilitiesEvent.Item> preAttach){
 
     	HSLibs.registerEvent(new SimpleItemCapabilityAttachEvent<T>(this.parent.parent.modid,this.isRequireSerialize,preAttach){
 
@@ -41,14 +46,14 @@ public class ComponentCapabilityAdapterItem<T> extends ComponentCapabilityAdapte
 
 	public static class ComponentCapabilityAdapterEntity<T> extends ComponentCapabilityAdapter<T,AttachCapabilitiesEvent.Entity,Entity>{
 
-		public ComponentCapabilityAdapterEntity(String modid, String name, CapabilityAdapterBase parent) {
+		public ComponentCapabilityAdapterEntity(String modid, String name, CapabilityAdapterFrame parent) {
 			super(modid, name, parent);
 			// TODO 自動生成されたコンストラクター・スタブ
 		}
 		/**
 		 * IPreAttach (inst,capa,facing,ev)
 		 */
-		public void registerEvent(IPreAttach<T,AttachCapabilitiesEvent.Entity> preAttach){
+		public void registerAttachEvent(IPreAttach<T,AttachCapabilitiesEvent.Entity> preAttach){
 
 	    	HSLibs.registerEvent(new SimpleEntityCapabilityAttachEvent<T>(this.parent.parent.modid,this.isRequireSerialize,preAttach){
 
@@ -76,12 +81,12 @@ public class ComponentCapabilityAdapterItem<T> extends ComponentCapabilityAdapte
 
 	public static class ComponentCapabilityAdapterTileEntity<T> extends ComponentCapabilityAdapter<T,AttachCapabilitiesEvent.TileEntity,TileEntity>{
 
-		public ComponentCapabilityAdapterTileEntity(String modid, String name, CapabilityAdapterBase parent) {
+		public ComponentCapabilityAdapterTileEntity(String modid, String name, CapabilityAdapterFrame parent) {
 			super(modid, name, parent);
 			// TODO 自動生成されたコンストラクター・スタブ
 		}
 
-		public void registerEvent(IPreAttach<T,AttachCapabilitiesEvent.TileEntity> preAttach){
+		public void registerAttachEvent(IPreAttach<T,AttachCapabilitiesEvent.TileEntity> preAttach){
 
 	    	HSLibs.registerEvent(new SimpleTECapabilityAttachEvent<T>(this.parent.parent.modid,this.isRequireSerialize,preAttach){
 

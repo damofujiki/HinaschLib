@@ -109,8 +109,8 @@ public class ParticleTypeWrapper {
 		public TextureAtlasSprite getTextureAtlasSplite(){
 			HSLib.logger.trace(this.getParticleName(), "particleのtextureをセット");
 			int itemmeta = this.getMeta() - 200;
-			HSLib.logger.trace(this.getParticleName(), ClientHelper.getTextureAtlasSprite(HSLib.itemParticleIcon, itemmeta));
-			return ClientHelper.getTextureAtlasSprite(HSLib.itemParticleIcon, itemmeta);
+			HSLib.logger.trace(this.getParticleName(), ClientHelper.getTextureAtlasSprite(HSLib.core().items.itemParticleIcon, itemmeta));
+			return ClientHelper.getTextureAtlasSprite(HSLib.core().items.itemParticleIcon, itemmeta);
 		}
 		public static Particles fromMeta(int meta){
 			return HSLibs.fromMeta(Particles.values(), meta);

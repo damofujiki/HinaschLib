@@ -2,17 +2,33 @@ package mods.hinasch.lib.item;
 
 import java.util.Optional;
 
-import mods.hinasch.lib.primitive.NameAndNumberAndID;
+import jline.internal.Preconditions;
+import mods.hinasch.lib.primitive.PropertyElementWithID;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public abstract class ItemProperty extends NameAndNumberAndID<ResourceLocation>{
+public abstract class ItemProperty extends PropertyElementWithID{
 
 	Optional<String> oreDictID = Optional.empty();
+	String iconname;
+
 	public ItemProperty(int id,String name) {
 		super(new ResourceLocation(name), name, id);
-		// TODO 自動生成されたコンストラクター・スタブ
+		this.iconname = Preconditions.checkNotNull(name);
+	}
+
+	public ItemProperty(int id,String name,String unlname) {
+		super(new ResourceLocation(name), unlname, id);
+		this.iconname = Preconditions.checkNotNull(unlname);
+	}
+
+	public String getIconName(){
+		return this.iconname;
+	}
+	public ItemProperty setIconName(String par1){
+		this.iconname = par1;
+		return this;
 	}
 
 	public abstract Item getItem();
@@ -20,8 +36,9 @@ public abstract class ItemProperty extends NameAndNumberAndID<ResourceLocation>{
 		return oreDictID;
 	}
 
-	public void setOreDictID(String name){
+	public ItemProperty setOreDictID(String name){
 		this.oreDictID = Optional.of(name);
+		return this;
 	}
 
 	public boolean isItemStackEqual(ItemStack is){

@@ -8,7 +8,7 @@ import com.mojang.realmsclient.util.Pair;
 import mods.hinasch.lib.client.ClientHelper;
 import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.particle.ParticleTypeWrapper;
-import mods.hinasch.lib.primitive.NameAndNumber;
+import mods.hinasch.lib.primitive.PropertyElementBase;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
@@ -17,7 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 
-public abstract class DebuffBase extends NameAndNumber<ResourceLocation>{
+public abstract class DebuffBase extends PropertyElementBase{
 
 	protected final ParticleTypeWrapper PARTICLE_DEFAULT = new ParticleTypeWrapper(EnumParticleTypes.SPELL);
 
@@ -59,7 +59,7 @@ public abstract class DebuffBase extends NameAndNumber<ResourceLocation>{
 	}
 	/** デバフ初期化関連*/
 	public DebuffBase getDebuffFromNBT(NBTTagCompound comp){
-		return HSLib.debuffRegistry.getObjectById(comp.getInteger("number"));
+		return HSLib.core().debuffRegistry.getObjectById(comp.getInteger("number"));
 //		return DebuffRegistry.getInstance().getDebuff(comp.getInteger("number"));
 	}
 
@@ -81,7 +81,7 @@ public abstract class DebuffBase extends NameAndNumber<ResourceLocation>{
 	 * @return
 	 */
 	public DebuffEffectBase initLivingDebuff(NBTTagCompound comp){
-		DebuffBase debuff = HSLib.debuffRegistry.getObjectById(comp.getInteger("number"));//.getInstance().getDebuff(comp.getInteger("number"));
+		DebuffBase debuff = HSLib.core().debuffRegistry.getObjectById(comp.getInteger("number"));//.getInstance().getDebuff(comp.getInteger("number"));
 		int remain = comp.getInteger("remain");
 		return this.createLivingDebuff(remain);
 	}
@@ -160,7 +160,7 @@ public abstract class DebuffBase extends NameAndNumber<ResourceLocation>{
 		if(this.iconBase!=null){
 			return this.iconBase.getIcon();
 		}
-		return ClientHelper.getTextureAtlasSprite(HSLib.itemIconBuff, 0);
+		return ClientHelper.getTextureAtlasSprite(HSLib.core().items.itemIconBuff, 0);
 	}
 
 	public TextureAtlasSprite getDebuffIconOverlay(){

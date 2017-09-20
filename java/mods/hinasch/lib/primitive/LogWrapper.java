@@ -53,13 +53,22 @@ public class LogWrapper {
 			String paramStr = Strings.EMPTY;
 			for(Object obj:params){
 				if(obj!=null){
-					paramStr += obj.toString() +",";
+					try{
+						paramStr += obj.toString() +",";
+					}catch(NullPointerException e){
+						e.printStackTrace();
+					}
+
 					if(obj instanceof Iterable){
 						Iterable<?> iterable = (Iterable<?>) obj;
 						for(Object child:iterable){
-							paramStr += child!=null ? child.toString() + ":" : "NULL!"+";";
+
+								paramStr += child!=null ? child.toString() + ":" : "NULL!"+";";
+
+
 						}
 					}
+
 
 				}else{
 					paramStr += "NULL!" +",";

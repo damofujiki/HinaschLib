@@ -1,5 +1,6 @@
 package mods.hinasch.lib.client;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -10,6 +11,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import mods.hinasch.lib.core.HSLib;
+import mods.hinasch.lib.iface.IIntSerializable;
+import mods.hinasch.lib.item.ItemProperty;
 import mods.hinasch.lib.world.XYZPos;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -184,6 +187,10 @@ public class ClientHelper {
 	public interface ModelResourceFunction<V> extends BiFunction<V,Integer,ModelResourceLocation>{
 
 	}
+
+	public interface ModelResourceFunction2<V> extends Function<V,ModelResourceLocation>{
+
+	}
 	public static <V> void registerWithSubTypes(Item item,Iterator<V> collection,ModelResourceFunction<V> func){
 		int index = 0;
 		for(Iterator<V> ite=collection;ite.hasNext();){
@@ -192,7 +199,11 @@ public class ClientHelper {
 			index += 1;
 		}
 	}
-
+	public static <V> void registerWithSubTypes(Item item,Collection<? extends ItemProperty> collection,ModelResourceFunction2<ItemProperty> func){
+		for(ItemProperty elm:collection){
+			ClientHelper.registerModelMeser(item, elm.getMeta(), func.apply(elm));
+		}
+	}
 
 	public static void registerColorItem(Item item){
 		if(item instanceof IItemColor){
@@ -254,7 +265,7 @@ public class ClientHelper {
 			this.agent = agent;
 		}
 
-		public PluralVariantsModelFactory create(Item item){
+		public PluralVariantsModelFactory target(Item item){
 			return new PluralVariantsModelFactory(this.agent,item);
 		}
 		public Item getItem() {
@@ -272,7 +283,10 @@ public class ClientHelper {
 			return this;
 		}
 
-
+		public <T> PluralVariantsModelFactory attachBy(Collection<? extends ItemProperty> properties,ModelResourceFunction2<ItemProperty> func){
+			ClientHelper.registerWithSubTypes(item, properties, func);
+			return this;
+		}
 		/**
 		 * 登録したvariantsの順番でsubtypesに順番に当てはめる場合はこっち
 		 * @return
@@ -548,4 +562,9 @@ public class ClientHelper {
 			return objectMouseOver;
 		}
 
+
+	public static interface IIconName extends IIntSerializable{
+
+		public String getIconName();
+	}
 }

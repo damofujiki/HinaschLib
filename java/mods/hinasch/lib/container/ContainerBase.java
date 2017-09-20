@@ -4,6 +4,7 @@ import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.iface.IIconItem;
 import mods.hinasch.lib.network.PacketChangeGuiMessage;
 import mods.hinasch.lib.network.PacketGuiButtonBaseNew;
+import mods.hinasch.lib.network.PacketSendGuiInfoToClient;
 import mods.hinasch.lib.util.SoundAndSFX;
 import mods.hinasch.lib.world.WorldHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -167,9 +168,14 @@ public abstract class ContainerBase extends Container{
 
 	public void changeMessage(EntityPlayer sender,String message){
 		if(ep instanceof EntityPlayerMP){
-			HSLib.getPacketDispatcher().sendTo(PacketChangeGuiMessage.create(message), (EntityPlayerMP) ep);
+			HSLib.core().getPacketDispatcher().sendTo(PacketChangeGuiMessage.create(message), (EntityPlayerMP) ep);
 		}
 	}
+
+	public PacketSendGuiInfoToClient getSyncPacketToClient(EntityPlayer ep){
+		return null;
+	}
+
 	/**
 	 *
 	 * @param rawSlotNumber　そのままのスロット番号

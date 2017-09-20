@@ -6,9 +6,8 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.world.EnvironmentalManager.EnvironmentalCondition.Type;
-import mods.hinasch.unsaga.UnsagaMod;
-import mods.hinasch.unsaga.plugin.hac.HeatAndClimateAgent;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
@@ -25,14 +24,20 @@ public class EnvironmentalManager {
 	 *
 	 */
 	public static class EnvironmentalCondition{
-		public static enum Type {COLD("condition.cold"),HOT("condition.hot"),SAFE("condition.safe"),HUMID("condition.humid");
+		public static enum Type {COLD("condition.cold",2),HOT("condition.hot",1),SAFE("condition.safe",0),HUMID("condition.humid",3);
 
+			int icon;
 			String name;
-			private Type(String name){
+			private Type(String name,int icon){
 				this.name = name;
+				this.icon = icon;
 			}
 			public String getName() {
 				return name;
+			}
+
+			public int getIconNumber(){
+				return this.icon;
 			}
 		}
 		/**
@@ -131,8 +136,9 @@ public class EnvironmentalManager {
 
 	public static EnvironmentalCondition getCondition(World w,XYZPos pos,Biome biome,EntityLivingBase living){
 
-		if(UnsagaMod.externalAPI.isLoadedClimateAPI()){
-			return HeatAndClimateAgent.getCondition(w, pos, biome, living);
+		if(HSLib.plugin().isLoadedHAC()){
+//			UnsagaMod.logger.trace("loaded", "loadされてる");
+			return HSLib.plugin().hac.getCondition(w, pos, biome, living);
 		}
 		List biomeList = BiomeHelper.getBiomeTypeList(biome);
 

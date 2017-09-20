@@ -2,12 +2,10 @@ package mods.hinasch.lib.capability;
 
 import com.google.common.base.Predicate;
 
-import mods.hinasch.lib.capability.CapabilityAdapterFactory.ICapabilityAdapter;
+import mods.hinasch.lib.capability.CapabilityAdapterFactory.ICapabilityAdapterPlan;
 import mods.hinasch.lib.capability.SimpleCapabilityAttachEvent.IPreAttach;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.AttachCapabilitiesEvent.Entity;
-import net.minecraftforge.event.AttachCapabilitiesEvent.Item;
 
 /**
  *
@@ -22,9 +20,9 @@ public abstract class ComponentCapabilityAdapter<T,K extends AttachCapabilitiesE
 	Predicate<K> predicate;
 	boolean isRequireSerialize = true;
 
-	ICapabilityAdapter<T> capabilityAdapter;
-	CapabilityAdapterBase<T> parent;
-	public ComponentCapabilityAdapter(String modid,String name,CapabilityAdapterBase parent){
+	ICapabilityAdapterPlan<T> capabilityAdapter;
+	CapabilityAdapterFrame<T> parent;
+	public ComponentCapabilityAdapter(String modid,String name,CapabilityAdapterFrame parent){
 		this.modid = modid;
 		this.name = name;
 		this.parent = parent;
@@ -37,13 +35,7 @@ public abstract class ComponentCapabilityAdapter<T,K extends AttachCapabilitiesE
 
 				@Override
 				public boolean apply(K input) {
-					if(input instanceof Item){
-						return ((Item) input).getItemStack()!=null;
-					}
-					if(input instanceof Entity){
-						return ((Entity)input).getEntity()!=null;
-					}
-					return false;
+					return input.getObject()!=null;
 				}
 
 			};
@@ -51,6 +43,13 @@ public abstract class ComponentCapabilityAdapter<T,K extends AttachCapabilitiesE
 	}
 
 
+	/**
+	 * default impliment やstorageを書いたクラス内に
+	 * static{}内に書いておくとOK
+	 * 例： static{ adapter.setpredicate(ev -> ev.getItem() instnaceof ItemArmor) }
+	 * @param predicate
+	 * @return
+	 */
 	public ComponentCapabilityAdapter setPredicate(Predicate<K> predicate){
 		this.predicate = predicate;
 		return this;
@@ -61,10 +60,10 @@ public abstract class ComponentCapabilityAdapter<T,K extends AttachCapabilitiesE
 		return this;
 	}
 
-	public void registerEvent(){
-		this.registerEvent(null);
+	public void registerAttachEvent(){
+		this.registerAttachEvent(null);
 	}
-	public abstract void registerEvent(IPreAttach<T,K> preAttach);
+	public abstract void registerAttachEvent(IPreAttach<T,K> preAttach);
 
 	public T getCapability(G entity){
 		return entity.getCapability(this.capabilityAdapter.getCapability(), null);

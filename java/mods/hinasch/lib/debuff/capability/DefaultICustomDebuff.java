@@ -8,6 +8,7 @@ import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.debuff.DebuffBase;
 import mods.hinasch.lib.debuff.DebuffEffectBase;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.potion.Potion;
 
 public class DefaultICustomDebuff  implements ICustomDebuff{
 
@@ -72,6 +73,11 @@ public class DefaultICustomDebuff  implements ICustomDebuff{
 	public boolean isTimeStopping() {
 		// TODO 自動生成されたメソッド・スタブ
 		return this.isStopping;
+	}
+	@Override
+	public Potion getPotion() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
 	}
 
 }

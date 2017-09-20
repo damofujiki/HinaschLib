@@ -1,12 +1,12 @@
 package mods.hinasch.lib.block;
 
-import mods.hinasch.lib.PropertyRegistry;
+import mods.hinasch.lib.PropertyRegistryWithID;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraftforge.oredict.OreDictionary;
 
-public abstract class PropertyRegistryOre<T extends BlockOreProperty> extends PropertyRegistry<T>{
+public abstract class PropertyRegistryOre<T extends BlockOreProperty> extends PropertyRegistryWithID<T>{
 
 
 

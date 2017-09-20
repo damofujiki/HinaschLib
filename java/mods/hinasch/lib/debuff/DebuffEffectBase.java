@@ -74,7 +74,7 @@ public class DebuffEffectBase implements INBTWritable{
 
 		if(this.debuff.getParticleNumber()!=null){
 			if(living.getRNG().nextInt(4)<=1){
-				HSLib.getParticlePacketSender().sendToAllAround(PacketParticle.toEntity(debuff.getParticleNumber(), living, 3), PacketUtil.getTargetPointNear(living));
+				HSLib.core().getParticlePacketSender().sendToAllAround(PacketParticle.toEntity(debuff.getParticleNumber(), living, 3), PacketUtil.getTargetPointNear(living));
 
 			}
 		}
@@ -104,13 +104,13 @@ public class DebuffEffectBase implements INBTWritable{
 	}
 
 	public DebuffBase getDebuff(NBTTagCompound nbt){
-		return HSLib.debuffRegistry.getObjectById(nbt.getInteger("number"));
+		return HSLib.core().debuffRegistry.getObjectById(nbt.getInteger("number"));
 //		return DebuffRegistry.getInstance().getDebuff(nbt.getInteger("number"));
 	}
 
 	public static DebuffEffectBase buildFromNBT(NBTTagCompound data){
 //		String[] strs = data.split(":");
-		DebuffBase debuff = HSLib.debuffRegistry.getObjectById(data.getInteger("number"));
+		DebuffBase debuff = HSLib.core().debuffRegistry.getObjectById(data.getInteger("number"));
 //		DebuffBase debuff = Unsaga.debuffs.getDebuff(data.getInteger("number"));
 		DebuffEffectBase output;
 		try{
@@ -168,7 +168,7 @@ public class DebuffEffectBase implements INBTWritable{
 		}
 		if(WorldHelper.isServer(living.worldObj)){
 //			PacketSyncDebuff psd = new PacketSyncDebuff(living.getEntityId(),this.debuff.number);
-			HSLib.getPacketDispatcher().sendToAll(PacketSyncDebuffNew.syncEnd(living, getDebuff()));
+			HSLib.core().getPacketDispatcher().sendToAll(PacketSyncDebuffNew.syncEnd(living, getDebuff()));
 //			Unsaga.packetDispatcher.sendToAll(psd);
 		}
 		//		if(living.worldObj.isRemote){
@@ -187,7 +187,7 @@ public class DebuffEffectBase implements INBTWritable{
 		if(WorldHelper.isServer(living.worldObj)){
 //			Unsaga.debug("デバフをクライアントへ送ります",this.getClass());
 //			PacketSyncDebuff psd = new PacketSyncDebuff(living.getEntityId(),this.debuff.number,this.remain);
-			HSLib.getPacketDispatcher().sendToAll(PacketSyncDebuffNew.syncStart(living, this));
+			HSLib.core().getPacketDispatcher().sendToAll(PacketSyncDebuffNew.syncStart(living, this));
 //			Unsaga.packetDispatcher.sendToAll(psd);
 		}
 

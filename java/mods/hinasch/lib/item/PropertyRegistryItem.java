@@ -3,10 +3,10 @@ package mods.hinasch.lib.item;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import mods.hinasch.lib.PropertyRegistry;
+import mods.hinasch.lib.PropertyRegistryWithID;
 import net.minecraftforge.oredict.OreDictionary;
 
-public abstract class PropertyRegistryItem<T extends ItemProperty> extends PropertyRegistry<T>{
+public abstract class PropertyRegistryItem<T extends ItemProperty> extends PropertyRegistryWithID<T>{
 
 
 	protected void registerOreDicts(){

@@ -1,5 +1,6 @@
 package mods.hinasch.lib.primitive;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -12,9 +13,11 @@ import mods.hinasch.lib.world.ScanHelper;
  * オブジェクトの同定はmap.containsKey(obj）に依存
  * staticにstream関連をちょっと用意
  * */
-public class ObjectCounter<T> {
+public class ObjectCounter<T> implements Iterable<ObjectCounter<T>>,Iterator<ObjectCounter<T>>{
 
 	public Map<T,Integer> map;
+
+	int ite_counter = 0;
 
 	public ObjectCounter(){
 		map = Maps.newHashMap();
@@ -60,4 +63,26 @@ public class ObjectCounter<T> {
 
 		}
 	}
+
+
+
+	@Override
+	public Iterator<ObjectCounter<T>> iterator() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+
+	@Override
+	public boolean hasNext() {
+		// TODO 自動生成されたメソッド・スタブ
+		return false;
+	}
+
+	@Override
+	public ObjectCounter<T> next() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+
+
 }

@@ -1,11 +1,11 @@
 package mods.hinasch.lib.block;
 
-import mods.hinasch.lib.primitive.NameAndNumberAndID;
+import mods.hinasch.lib.primitive.PropertyElementWithID;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
-public abstract class BlockProperty extends NameAndNumberAndID<ResourceLocation>{
+public abstract class BlockProperty extends PropertyElementWithID{
 
 	public BlockProperty(int id,String name) {
 		super(new ResourceLocation(name), name, id);

@@ -118,7 +118,7 @@ public class PacketSyncDebuffNew implements IMessage{
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this .debuff = HSLib.debuffRegistry.getObjectById(buf.readInt());
+		this .debuff = HSLib.core().debuffRegistry.getObjectById(buf.readInt());
 		this.type = Type.fromInt(buf.readInt());
 		this.targetid = buf.readInt();
 		if(this.type==Type.START){

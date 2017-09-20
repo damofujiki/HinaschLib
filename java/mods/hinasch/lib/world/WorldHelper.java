@@ -24,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class WorldHelper {
 
@@ -349,10 +350,10 @@ public class WorldHelper {
 	}
 	public static Biome getBiomeGenForCoords(World world,BlockPos blockPos) {
 
-		return world.getBiomeGenForCoords(blockPos);
+		return world.getBiome(blockPos);
 	}
 
 	public static String getSide(World world){
-		return isServer(world) ? "Server" : "Client";
+		return isServer(world) ? Side.SERVER.toString() : Side.CLIENT.toString();
 	}
 }

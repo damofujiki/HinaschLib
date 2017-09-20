@@ -71,6 +71,7 @@ public abstract class PacketGuiButtonBaseNew implements IMessage{
 	 * @param guiID
 	 * @return
 	 */
+	@Deprecated
 	public abstract ContainerBase getContainer(Container openContainer,int guiID);
 
 	@Override

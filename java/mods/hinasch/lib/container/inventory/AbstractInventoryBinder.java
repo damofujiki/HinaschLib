@@ -60,7 +60,7 @@ public abstract class AbstractInventoryBinder<T> extends InventoryBase{
 		public void saveToNBT(ItemStack binder){
 
 			if(CapabilityInventory.adapter.hasCapability(binderObject)){
-				CapabilityInventory.adapter.getCapability(binderObject).setStacks(theInventory);
+				CapabilityInventory.adapter.getCapability(binderObject).setStacks(theInventory.toArray());
 			}
 			//				ItemUtil.saveItemStacksToItemNBT((ItemStack) binder,theInventory);
 
@@ -121,7 +121,7 @@ public abstract class AbstractInventoryBinder<T> extends InventoryBase{
 
 			if(CapabilityInventory.adapterTE.hasCapability(binderObject)){
 				HSLib.logger.trace("save", binder);
-				CapabilityInventory.adapterTE.getCapability(binderObject).setStacks(theInventory);
+				CapabilityInventory.adapterTE.getCapability(binderObject).setStacks(theInventory.toArray());
 			}
 			//				ItemUtil.saveItemStacksToItemNBT((ItemStack) binder,theInventory);
 

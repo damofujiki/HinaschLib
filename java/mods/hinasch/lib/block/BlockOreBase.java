@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import com.google.common.base.Optional;
 
 import jline.internal.Preconditions;
-import mods.hinasch.lib.primitive.NameAndNumberAndID;
+import mods.hinasch.lib.primitive.PropertyElementWithID;
 import mods.hinasch.lib.util.Statics;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
@@ -138,8 +138,8 @@ public class BlockOreBase extends BlockOre{
 
 		public ResourceLocation getKey();
 		public String getOreDictID();
-		public Optional<? extends NameAndNumberAndID> getSmelted();
-		public Optional<? extends NameAndNumberAndID> getInsideItemData();
+		public Optional<? extends PropertyElementWithID> getSmelted();
+		public Optional<? extends PropertyElementWithID> getInsideItemData();
 		public int getHarvestLevel();
 		public Item getItem();
 		public float getExp();

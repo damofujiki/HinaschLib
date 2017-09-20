@@ -14,17 +14,29 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class PacketSyncCapability<T extends ISyncCapability> implements IMessage{
 
-	public static Map<String,Capability<?>> syncCapabilityMap = Maps.newHashMap();
+	protected static Map<String,Capability<?>> syncCapabilityMap = Maps.newHashMap();
 	Capability<T> capability;
 	T capabilityInstance;
 	NBTTagCompound nbt;
 	NBTTagCompound args;
 
 
+	public static void registerSyncCapability(String id,Capability<?> cap){
+		syncCapabilityMap.put(id, cap);
+	}
 	public NBTTagCompound getArgs() {
 		return args;
 	}
+
 	public static <K extends ISyncCapability> PacketSyncCapability create(Capability<K> capability,K capa,NBTTagCompound... args){
+		return new PacketSyncCapability(capability,capa,args);
+	}
+
+	/** 未完 **/
+	public static <K extends ISyncCapability> PacketSyncCapability createRequest(Capability<K> capability,K capa,NBTTagCompound... args){
+		if(args[0]!=null){
+			args[0].setBoolean("isRequest", true);
+		}
 		return new PacketSyncCapability(capability,capa,args);
 	}
 	public PacketSyncCapability(){
@@ -85,6 +97,12 @@ public class PacketSyncCapability<T extends ISyncCapability> implements IMessage
 
 		@Override
 		public IMessage onMessage(PacketSyncCapability message, MessageContext ctx) {
+//			if(message.args.hasKey("isRequest")){
+//				if(message.args.getBoolean("isRequest")){
+//					return message;
+//				}
+//
+//			}
 			if(ctx.side.isClient()){
 				 message.capabilityInstance.onPacket(message, ctx);
 			}

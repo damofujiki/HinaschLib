@@ -43,24 +43,35 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  *
  */
 public class ItemCustomEntityEgg extends Item implements IItemColor{
+	public static interface IPreSpawn{
+		public Entity preSpawn(World world,Entity entity,XYZPos pos);
+	}
 	public static class CustomEggInfo{
 
 		public EntityEggInfo eggInfo;
 		public String name;
 		public Class<?extends Entity> entity;
+		public IPreSpawn preSpawn;
 
 		public CustomEggInfo(Class<?extends Entity> clazz,EntityEggInfo egginfo,String name){
 			this.entity = clazz;
 			this.eggInfo = egginfo;
 			this.name = name;
+
+		}
+
+		public CustomEggInfo(Class<?extends Entity> clazz,EntityEggInfo egginfo,String name,IPreSpawn pre){
+			this(clazz,egginfo,name);
+			this.preSpawn = pre;
 		}
 	}
 
 	/**
 	 * Spawns the creature specified by the egg's type in the location specified by the last three parameters.
 	 * Parameters: world, entityID, x, y, z.
+	 * @param info
 	 */
-	public static Entity spawnCreature(World par0World, Entity entity, XYZPos pos)
+	public static Entity spawnCreature(World par0World, Entity entity, XYZPos pos, CustomEggInfo info)
 	{
 
 
@@ -75,6 +86,9 @@ public class ItemCustomEntityEgg extends Item implements IItemColor{
 			if(entityliving instanceof ISpawnOption){
 				entityliving = (EntityLiving) ((ISpawnOption)entityliving).preSpawn(par0World, entity, pos);
 			}
+			if(info.preSpawn!=null){
+				entityliving = (EntityLiving) info.preSpawn.preSpawn(par0World, entityliving, pos);
+			}
 			par0World.spawnEntityInWorld(entity);
 			entityliving.playLivingSound();
 		}else{
@@ -82,6 +96,9 @@ public class ItemCustomEntityEgg extends Item implements IItemColor{
 				entity.setLocationAndAngles(pos.dx, pos.dy, pos.dz, MathHelper.wrapDegrees(par0World.rand.nextFloat() * 360.0F), 0.0F);
 				if(entity instanceof ISpawnOption){
 					entity = ((ISpawnOption)entity).preSpawn(par0World, entity, pos);
+				}
+				if(info.preSpawn!=null){
+					entity = (EntityLiving) info.preSpawn.preSpawn(par0World, entity, pos);
 				}
 				par0World.spawnEntityInWorld(entity);
 			}
@@ -111,6 +128,13 @@ public class ItemCustomEntityEgg extends Item implements IItemColor{
 		this.eggMap.put(num, new CustomEggInfo(clazz,eggInfo,name));
 
 	}
+	public void addMaping(int num,Class<?extends Entity> clazz,String name,int color1,int color2,IPreSpawn pre){
+		EntityEggInfo eggInfo = new EntityEggInfo(name,color1,color2);
+		this.eggMap.put(num, new CustomEggInfo(clazz,eggInfo,name,pre));
+
+	}
+
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public int getColorFromItemstack(ItemStack stack, int tintIndex) {
@@ -177,7 +201,7 @@ public class ItemCustomEntityEgg extends Item implements IItemColor{
 
 	public String getUnlocalizedName(ItemStack par1ItemStack)
 	{
-		return super.getUnlocalizedName() + this.eggMap.get(par1ItemStack.getItemDamage()).name;
+		return "item.entityEgg." + this.eggMap.get(par1ItemStack.getItemDamage()).name;
 	}
 
 	//	/**
@@ -231,7 +255,7 @@ public class ItemCustomEntityEgg extends Item implements IItemColor{
 					{
 						Entity entity = this.getEntityFromClass(par2World, this.eggMap.get(par1ItemStack.getItemDamage()).entity);//spawnCreature(par3World, par1ItemStack.getItemDamage(), (double)par4 + 0.5D, (double)par5 + d0, (double)par6 + 0.5D);
 						XYZPos pos = new XYZPos((double)i, (double)j, (double)k);
-						this.spawnCreature(par2World, entity, pos);
+						spawnCreature(par2World, entity, pos,this.eggMap.get(par1ItemStack.getItemDamage()));
 						if (entity != null)
 						{
 							if (entity instanceof EntityLivingBase && par1ItemStack.hasDisplayName())
@@ -285,9 +309,10 @@ public class ItemCustomEntityEgg extends Item implements IItemColor{
 
 			Entity entity = this.getEntityFromClass(par3World, this.eggMap.get(stack.getItemDamage()).entity);//spawnCreature(par3World, par1ItemStack.getItemDamage(), (double)par4 + 0.5D, (double)par5 + d0, (double)par6 + 0.5D);
 			XYZPos pos3 =(new XYZPos(pos2)).addDouble(0.5D, d0, 0.5D);
+
 			System.out.println(entity);
 			System.out.println(pos3);
-			this.spawnCreature(par3World, entity, new XYZPos(pos3));
+			this.spawnCreature(par3World, entity, new XYZPos(pos3),this.eggMap.get(stack.getItemDamage()));
 
 			if (entity != null)
 			{
@@ -308,6 +333,7 @@ public class ItemCustomEntityEgg extends Item implements IItemColor{
 
 
 
+	@Deprecated
 	public static interface ISpawnOption{
 		public Entity preSpawn(World world,Entity entity,XYZPos pos);
 	}

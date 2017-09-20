@@ -1,6 +1,7 @@
 package mods.hinasch.lib.container.inventory;
 
-import mods.hinasch.lib.core.HSLib;
+import mods.hinasch.lib.item.ItemUtil;
+import mods.hinasch.lib.item.ItemUtil.ItemStackList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -12,51 +13,51 @@ import net.minecraft.util.text.ITextComponent;
  *
  */
 public class InventoryBase implements IInventory{
-	protected ItemStack[] theInventory;
+	protected ItemStackList theInventory;
 
 
 
 	public InventoryBase(int size){
 
-		this.theInventory = new ItemStack[size];
+		this.theInventory = new ItemStackList(size);
 	}
 
 	@Override
 	public int getSizeInventory() {
 		// TODO 自動生成されたメソッド・スタブ
-		return this.theInventory.length;
+		return this.theInventory.getRawList().size();
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
 
-		return this.theInventory[i];
+		return this.theInventory.get(i)!=ItemUtil.EMPTY_STACK?this.theInventory.get(i) : null;
 	}
 
 	@Override
 	public ItemStack decrStackSize(int num, int size) {
-        if (this.theInventory[num] != null)
+        if (this.theInventory.get(num) != ItemUtil.EMPTY_STACK)
         {
             ItemStack itemstack;
 
-            if (this.theInventory[num].stackSize <= size)
+            if (this.theInventory.get(num).stackSize <= size)
             {
-                itemstack = this.theInventory[num];
-                this.theInventory[num] = null;
+                itemstack = this.theInventory.get(num);
+                this.theInventory.setStack(num, ItemUtil.EMPTY_STACK);
                 this.markDirty();
-                return itemstack;
+                return itemstack!=ItemUtil.EMPTY_STACK ? itemstack : null;
             }
             else
             {
-                itemstack = this.theInventory[num].splitStack(size);
+                itemstack = this.theInventory.get(num).splitStack(size);
 
-                if (this.theInventory[num].stackSize == 0)
+                if (this.theInventory.get(num).stackSize == 0)
                 {
-                    this.theInventory[num] = null;
+                    this.theInventory.setStack(num, ItemUtil.EMPTY_STACK);
                 }
 
                 this.markDirty();
-                return itemstack;
+                return itemstack!=ItemUtil.EMPTY_STACK ? itemstack : null;
             }
         }
         else
@@ -74,10 +75,10 @@ public class InventoryBase implements IInventory{
 	@Override
 	public ItemStack removeStackFromSlot(int i) {
 		// TODO 自動生成されたメソッド・スタブ
-		if(this.theInventory[i]!=null){
-			ItemStack is = this.theInventory[i];
-			this.theInventory[i] = null;
-			return is;
+		if(this.theInventory.get(i)!=ItemUtil.EMPTY_STACK){
+			ItemStack is = this.theInventory.get(i);
+			this.theInventory.setStack(i, ItemUtil.EMPTY_STACK);
+			return is!=ItemUtil.EMPTY_STACK ? is : null;
 		}
 		return null;
 	}
@@ -85,10 +86,10 @@ public class InventoryBase implements IInventory{
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 
-		HSLib.logger.trace("setslot", i,itemstack);
-		this.theInventory[i] = itemstack;
+//		HSLib.logger.trace("setslot", i,itemstack);
+		this.theInventory.setStack(i, itemstack);
 
-        if (itemstack != null && itemstack.stackSize > this.getInventoryStackLimit())
+        if (itemstack!=ItemUtil.EMPTY_STACK&& itemstack != null && itemstack.stackSize > this.getInventoryStackLimit())
         {
             itemstack.stackSize = this.getInventoryStackLimit();
         }

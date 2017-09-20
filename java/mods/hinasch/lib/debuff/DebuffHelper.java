@@ -24,11 +24,11 @@ public class DebuffHelper {
 	}
 
 	public static boolean hasCapability(EntityLivingBase living){
-		return living.hasCapability(HSLib.CAP_DEBUFF, null);
+		return living.hasCapability(HSLib.core().CAP_DEBUFF, null);
 	}
 
 	public static ICustomDebuff getCapability(EntityLivingBase living){
-		ICustomDebuff capa = living.getCapability(HSLib.CAP_DEBUFF, null);
+		ICustomDebuff capa = living.getCapability(HSLib.core().CAP_DEBUFF, null);
 		return capa;
 	}
 	public static void addLivingDebuff(EntityLivingBase living,DebuffEffectBase livdebuff){
@@ -59,7 +59,7 @@ public class DebuffHelper {
 	}
 
 	public static void removeDebuff(EntityLivingBase living,DebuffBase debuff){
-		ICustomDebuff capa = living.getCapability(HSLib.CAP_DEBUFF, null);
+		ICustomDebuff capa = living.getCapability(HSLib.core().CAP_DEBUFF, null);
 		if(capa!=null){
 			if(capa.getDebuffs().isEmpty()){
 				return;
@@ -102,7 +102,7 @@ public class DebuffHelper {
 
 	public static boolean hasDebuff(EntityLivingBase living,DebuffBase debuff){
 
-		ICustomDebuff capaDebuff = living.getCapability(HSLib.CAP_DEBUFF, null);
+		ICustomDebuff capaDebuff = living.getCapability(HSLib.core().CAP_DEBUFF, null);
 		if(capaDebuff!=null){
 			if(capaDebuff.getDebuffs().isEmpty()){
 				return false;
@@ -127,13 +127,13 @@ public class DebuffHelper {
 
 	public static Set<DebuffEffectBase> getActiveDebuffs(EntityLivingBase living){
 		if(hasCapability(living)){
-			ICustomDebuff capaDebuff = living.getCapability(HSLib.CAP_DEBUFF, null);
+			ICustomDebuff capaDebuff = living.getCapability(HSLib.core().CAP_DEBUFF, null);
 			return capaDebuff.getDebuffs();
 		}
 		return Sets.newHashSet();
 	}
 	public static Optional<DebuffEffectBase> getLivingDebuff(EntityLivingBase living,DebuffBase debuff){
-		ICustomDebuff capaDebuff = living.getCapability(HSLib.CAP_DEBUFF, null);
+		ICustomDebuff capaDebuff = living.getCapability(HSLib.core().CAP_DEBUFF, null);
 		if(capaDebuff!=null){
 			if(capaDebuff.getDebuffs().isEmpty()){
 				return Optional.absent();

@@ -2,7 +2,7 @@ package mods.hinasch.lib.container;
 
 import mods.hinasch.lib.container.inventory.AbstractInventoryBinder;
 import mods.hinasch.lib.core.HSLib;
-import mods.hinasch.lib.network.PacketGuiButtonBaseNew;
+import mods.hinasch.lib.network.textmenu.PacketGuiButtonHSLib;
 import mods.hinasch.lib.world.WorldHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
@@ -52,7 +52,7 @@ public abstract class AbstractContainerBinder<T> extends ContainerBase{
 	}
 
 	@Override
-	public PacketGuiButtonBaseNew getPacketGuiButton(int guiID, int buttonID,
+	public PacketGuiButtonHSLib getPacketGuiButton(int guiID, int buttonID,
 			NBTTagCompound args) {
 		// TODO 自動生成されたメソッド・スタブ
 		return null;

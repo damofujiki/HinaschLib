@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import mods.hinasch.lib.capability.CapabilityAdapterFactory.ICapabilityAdapter;
+import mods.hinasch.lib.capability.CapabilityAdapterFactory.ICapabilityAdapterPlan;
 import mods.hinasch.lib.capability.ComponentCapabilityAdapterItem.ComponentCapabilityAdapterTileEntity;
 import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.iface.IRequireInitializing;
@@ -27,7 +27,7 @@ public class CapabilityInventory {
 
 	@CapabilityInject(IItemInventory.class)
 	public static Capability<IItemInventory> CAPA;
-	public static ICapabilityAdapter<IItemInventory> iCapabilityAdapter = new ICapabilityAdapter<IItemInventory>(){
+	public static ICapabilityAdapterPlan<IItemInventory> iCapabilityAdapter = new ICapabilityAdapterPlan<IItemInventory>(){
 
 		@Override
 		public Capability<IItemInventory> getCapability() {
@@ -82,7 +82,7 @@ public class CapabilityInventory {
 		}
 
 	}
-	public static CapabilityAdapterBase adapterBase = HSLib.capabilityAdapterFactory.create(iCapabilityAdapter);
+	public static CapabilityAdapterFrame adapterBase = HSLib.core().capabilityAdapterFactory.create(iCapabilityAdapter);
 	public static ComponentCapabilityAdapterItem<IItemInventory> adapter = adapterBase.createChildItem("itemInventory");
 	public static ComponentCapabilityAdapterTileEntity<IItemInventory> adapterTE = adapterBase.createChildTileEntity("itemInventoryTE");
 	static{
@@ -90,7 +90,7 @@ public class CapabilityInventory {
 		adapterTE.setPredicate(ev ->predicatesTE.keySet().stream().anyMatch(in -> in.test(ev))).setRequireSerialize(true);
 	}
 	public static void registerEvents(){
-		adapter.registerEvent((inst,capa,facing,ev)->{
+		adapter.registerAttachEvent((inst,capa,facing,ev)->{
 			predicates.entrySet().forEach(entry ->{
 				if(entry.getKey().test(ev) && !inst.hasInitialized()){
 					inst.setMaxStackSize(entry.getValue());
@@ -99,7 +99,7 @@ public class CapabilityInventory {
 				}
 			});
 		});
-		adapterTE.registerEvent((inst,capa,facing,ev)->{
+		adapterTE.registerAttachEvent((inst,capa,facing,ev)->{
 			predicatesTE.entrySet().forEach(entry ->{
 				if(entry.getKey().test(ev) && !inst.hasInitialized()){
 					inst.setMaxStackSize(entry.getValue());

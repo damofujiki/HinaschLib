@@ -22,7 +22,7 @@ import net.minecraft.nbt.NBTTagList;
 public class UtilNBT {
 
 	private static enum EnumNBTType {FLOAT,BYTE,INTEGER,STRING,TAG,LONG,DOUBLE,SHORT};
-	public static final int NBKEY_TAGLIST = 10;
+
 	public static final int NBTKEY_COMPOUND = 10;
 
 	protected static final String KEY = "FreeState";
@@ -103,7 +103,7 @@ public class UtilNBT {
 		initNBTIfNotInit(is);
 	}
 
-	public static void setFreeNestTag(ItemStack is,String key,NBTTagCompound nest){
+	public static void setTag(ItemStack is,String key,NBTTagCompound nest){
 		initStackNBT(is);
 		NBTTagCompound nbt = is.getTagCompound();
 		nbt.setTag(key, nest);
@@ -115,28 +115,28 @@ public class UtilNBT {
 		nbt.setByteArray(key, bytes);
 		return;
 	}
-	public static void setFreeTag(ItemStack is,String key,int val){
+	public static void setTag(ItemStack is,String key,int val){
 		initStackNBT(is);
 		NBTTagCompound nbt = is.getTagCompound();
 		nbt.setInteger(key, (int)val);
 		return;
 	}
 
-	public static void setFreeTag(ItemStack is,String key,String val){
+	public static void setTag(ItemStack is,String key,String val){
 		initStackNBT(is);
 		NBTTagCompound nbt = is.getTagCompound();
 		nbt.setString(key, val);
 		return;
 	}
 
-	public static void setFreeTag(ItemStack is,String key,float val){
+	public static void setTag(ItemStack is,String key,float val){
 		initStackNBT(is);
 		NBTTagCompound nbt = is.getTagCompound();
 		nbt.setFloat(key, (float)val);
 		return;
 	}
 
-	public static void setFreeTag(ItemStack is,String key,boolean val){
+	public static void setTag(ItemStack is,String key,boolean val){
 		initStackNBT(is);
 		NBTTagCompound nbt = is.getTagCompound();
 		nbt.setBoolean(key, val);
@@ -160,20 +160,20 @@ public class UtilNBT {
 		return (NBTTagCompound) nbt.getTag(key);
 	}
 
-	public static int readFreeTag(ItemStack is,String key){
+	public static int readInt(ItemStack is,String key){
 		Preconditions.checkNotNull(is);
 		NBTTagCompound nbt = is.getTagCompound();
 		if(!tagCheck(nbt,key))return ERROR;
 		int rt = (int)nbt.getInteger(key);
 		return rt;
 	}
-	public static byte[] readFreeBytes(ItemStack is,String key){
+	public static byte[] readBytes(ItemStack is,String key){
 		Preconditions.checkNotNull(is);
 		NBTTagCompound nbt = is.getTagCompound();
 		if(!tagCheck(nbt,key))return null;
 		return nbt.getByteArray(key);
 	}
-	public static float readFreeFloat(ItemStack is,String key){
+	public static float readFloat(ItemStack is,String key){
 		Preconditions.checkNotNull(is);
 		NBTTagCompound nbt = is.getTagCompound();
 		if(!tagCheck(nbt,key))return ERROR;
@@ -181,7 +181,7 @@ public class UtilNBT {
 		return rt;
 	}
 
-	public static String readFreeStrTag(ItemStack is,String key){
+	public static String readString(ItemStack is,String key){
 		Preconditions.checkNotNull(is);
 		NBTTagCompound nbt = is.getTagCompound();
 		if(!tagCheck(nbt,key))return "";
@@ -189,25 +189,11 @@ public class UtilNBT {
 		return rt;
 	}
 
-	public static boolean readFreeTagBool(ItemStack is,String key){
+	public static boolean readBool(ItemStack is,String key){
 		Preconditions.checkNotNull(is);
 		NBTTagCompound nbt = is.getTagCompound();
 		if(!tagCheck(nbt,key))return false;
 		boolean rt = nbt.getBoolean(key);
-		return rt;
-	}
-
-	public static void setState(ItemStack is,int state){
-		setFreeTag(is,KEY,state);
-	}
-
-	public static void setState(ItemStack is,boolean state){
-		setFreeTag(is,KEY,state);
-	}
-
-	public static int readState(ItemStack is){
-		int rt = 0;
-		rt = readFreeTag(is,KEY);
 		return rt;
 	}
 
@@ -216,14 +202,9 @@ public class UtilNBT {
 		if(nbt==null){
 			initNBTIfNotInit(is);
 		}
-		return readFreeTag(is,KEY)==ERROR ? false : true;
+		return readInt(is,KEY)==ERROR ? false : true;
 	}
 
-	public static boolean readStateBool(ItemStack is){
-		boolean rt = false;
-		rt = readFreeTagBool(is,KEY);
-		return rt;
-	}
 
 	/**
 	 * compoundそのものを格納できるNBT。最後にnbt.setTagで登録する。５１２までネストできるらしい。
@@ -240,7 +221,7 @@ public class UtilNBT {
 	 * @return
 	 */
 	public static NBTTagList getTagList(NBTTagCompound nbt,String key){
-		NBTTagList tags = nbt.getTagList(key, NBKEY_TAGLIST);
+		NBTTagList tags = nbt.getTagList(key, NBTKEY_COMPOUND);
 
 		Preconditions.checkNotNull(tags);
 		return tags;
@@ -404,7 +385,7 @@ public class UtilNBT {
 	}
 
 	public static <T> List<T> readListFromNBT(NBTTagCompound comp,String key,RestoreFunc<T> nbtToObj){
-		NBTTagList tag = comp.getTagList(key, NBKEY_TAGLIST);
+		NBTTagList tag = comp.getTagList(key, NBTKEY_COMPOUND);
 		List<T> rt = new ArrayList();
 		for(int i=0;i<tag.tagCount();i++){
 			NBTTagCompound child = tag.getCompoundTagAt(i);
@@ -420,4 +401,5 @@ public class UtilNBT {
 	public static interface RestoreFunc<T> extends Function<NBTTagCompound,T>{
 
 	}
+
 }

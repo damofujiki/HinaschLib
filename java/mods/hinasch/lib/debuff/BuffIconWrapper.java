@@ -26,7 +26,7 @@ public class BuffIconWrapper{
 			return ClientHelper.getTextureAtlasSprite(this.item);
 		}
 		if(iconNumber.isPresent()){
-			return ClientHelper.getTextureAtlasSprite(HSLib.itemIconBuff, iconNumber.get().getMeta());
+			return ClientHelper.getTextureAtlasSprite(HSLib.core().items.itemIconBuff, iconNumber.get().getMeta());
 		}
 
 		return null;

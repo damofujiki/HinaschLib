@@ -20,28 +20,28 @@ public class EventAttachDebuff {
 
 			e.addCapability(new ResourceLocation(HSLib.MODID,"debuffs"), new ICapabilitySerializable<NBTBase>(){
 
-				ICustomDebuff inst = HSLib.CAP_DEBUFF.getDefaultInstance();
+				ICustomDebuff inst = HSLib.core().CAP_DEBUFF.getDefaultInstance();
 				@Override
 				public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 					// TODO 自動生成されたメソッド・スタブ
-					return HSLib.CAP_DEBUFF !=null && capability == HSLib.CAP_DEBUFF;
+					return HSLib.core().CAP_DEBUFF !=null && capability == HSLib.core().CAP_DEBUFF;
 				}
 
 				@Override
 				public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-					if(HSLib.CAP_DEBUFF !=null && capability == HSLib.CAP_DEBUFF)return (T)inst;
+					if(HSLib.core().CAP_DEBUFF !=null && capability == HSLib.core().CAP_DEBUFF)return (T)inst;
 					return null;
 				}
 
 				@Override
 				public NBTBase serializeNBT() {
 
-					return (NBTBase)HSLib.CAP_DEBUFF.getStorage().writeNBT(HSLib.CAP_DEBUFF, inst, null);
+					return (NBTBase)HSLib.core().CAP_DEBUFF.getStorage().writeNBT(HSLib.core().CAP_DEBUFF, inst, null);
 				}
 
 				@Override
 				public void deserializeNBT(NBTBase nbt) {
-					HSLib.CAP_DEBUFF.getStorage().readNBT(HSLib.CAP_DEBUFF, inst, null, nbt);
+					HSLib.core().CAP_DEBUFF.getStorage().readNBT(HSLib.core().CAP_DEBUFF, inst, null, nbt);
 
 				}}
 			);

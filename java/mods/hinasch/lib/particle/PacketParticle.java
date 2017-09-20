@@ -57,21 +57,21 @@ public class PacketParticle implements IMessage{
 
 	public void sendToPlayer(EntityPlayer player){
 		if(player instanceof EntityPlayerMP){
-			HSLib.getPacketDispatcher().sendTo(this, (EntityPlayerMP) player);
+			HSLib.core().getPacketDispatcher().sendTo(this, (EntityPlayerMP) player);
 		}
 
 	}
 
 	public void sendToServer(){
-		HSLib.getPacketDispatcher().sendToServer(this);
+		HSLib.core().getPacketDispatcher().sendToServer(this);
 	}
 
 	public void sendToAll(){
-		HSLib.getPacketDispatcher().sendToAll(this);
+		HSLib.core().getPacketDispatcher().sendToAll(this);
 	}
 
 	public void sendToAllAround(TargetPoint point){
-		HSLib.getPacketDispatcher().sendToAllAround(this, point);
+		HSLib.core().getPacketDispatcher().sendToAllAround(this, point);
 	}
 
 	public static PacketParticle toEntity(EnumParticleTypes type,Entity entity,int dens){

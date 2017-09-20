@@ -2,6 +2,7 @@ package mods.hinasch.lib.container.inventory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -13,6 +14,7 @@ import com.google.common.collect.Sets;
 
 import mods.hinasch.lib.DebugLog;
 import mods.hinasch.lib.iface.Consumer;
+import mods.hinasch.lib.item.ItemUtil;
 import mods.hinasch.lib.primitive.ListHelper.BiPredicate;
 import mods.hinasch.lib.primitive.ListHelper.Range;
 import mods.hinasch.lib.util.HSLibs;
@@ -21,6 +23,7 @@ import mods.hinasch.lib.world.XYZPos;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
@@ -29,6 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -55,11 +59,32 @@ public class InventoryHandler {
 //	}
 
 
+	/** プレイヤーインベントリの場合だけ有効*/
+	public List<InventoryStatus> getArmorInventory(){
+		List<InventoryStatus> list = Lists.newArrayList();
+		if(this.inv instanceof InventoryPlayer){
+			InventoryPlayer invp = (InventoryPlayer) this.inv;
+			for(int i=0;i<invp.armorInventory.length;i++){
+				list.add(new InventoryStatus(i, invp.armorInventory[i], inv));
+			}
+		}
+		return list;
+	}
+	/** プレイヤーインベントリの場合だけ有効*/
+	public java.util.Optional<InventoryStatus> getFirstEmptyArmorSlot(){
+		return this.getArmorInventory().stream().filter(st -> st.getStack()==null).findFirst();
+	}
 	public static InventoryHandler create(IInventory par1){
 		return new InventoryHandler(par1);
 	}
 	public IInventory getInv(){
 		return this.inv;
+	}
+
+	public void fill(ItemStack is,int start,int end){
+		for(int i=start;i<end;i++){
+			this.inv.setInventorySlotContents(i, is);
+		}
 	}
 	public boolean forEach(Predicate<InventoryStatus> consumer,Range range){
 		for(int i=range.min;i<range.max;i++){
@@ -81,9 +106,10 @@ public class InventoryHandler {
 		}
 		return list.stream();
 	}
-	public Stream<InventoryStatus> toStream(Range range){
+
+	public Stream<InventoryStatus> toStream(int min,int max){
 		List<InventoryStatus> list = Lists.newArrayList();
-		for(int i=range.min;i<range.max;i++){
+		for(int i=min;i<max;i++){
 			list.add(new InventoryStatus(i,inv.getStackInSlot(i),inv));
 		}
 		return list.stream();
@@ -123,7 +149,52 @@ public class InventoryHandler {
 		slot.putStack(null);
 	}
 
+	public OptionalInt getFirstMergeableOrEmptySlot(ItemStack other){
+		return this.getFirstMergeableOrEmptySlot(other, 0, this.inv.getSizeInventory());
+	}
+	public OptionalInt getFirstMergeableOrEmptySlot(ItemStack other,int start,int end){
+		if(ItemUtil.isItemStackPresent(other)){
+			for(int i=start;i<end;i++){
+				ItemStack stack = this.inv.getStackInSlot(i);
+				if(ItemUtil.isItemStackNull(stack)){
+					return OptionalInt.of(i);
+				}
+				if(ItemUtil.isItemStackPresent(stack) && stack.isItemEqual(other) && stack.isStackable() &&stack.stackSize<64){
+					return OptionalInt.of(i);
+				}
+			}
+		}
+		return OptionalInt.empty();
+	}
+	public void merge(int invnum,Slot otherSlot){
+		ItemStack other = otherSlot.getStack();
+		if(ItemUtil.isItemStackNull(other)){
+			return;
+		}
+		ItemStack stack = this.inv.getStackInSlot(invnum);
+		if(ItemUtil.isItemStackPresent(stack) && stack.stackSize<64 && stack.isStackable()){
+			int mergedsize = other.stackSize + stack.stackSize;
+			if(mergedsize>64){
+				ItemUtil.setStackSize(stack,64);
+				this.inv.setInventorySlotContents(invnum,stack);
+				int othersize = mergedsize - 64;
+				if(othersize<0){
+					otherSlot.putStack(null);
+				}else{
+					ItemUtil.setStackSize(other, othersize);
+				}
 
+			}else{
+				ItemUtil.setStackSize(stack,mergedsize);
+				this.inv.setInventorySlotContents(invnum, stack);
+				otherSlot.putStack(null);
+			}
+		}
+		if(ItemUtil.isItemStackNull(stack)){
+			this.inv.setInventorySlotContents(invnum, other.copy());
+			otherSlot.putStack(null);
+		}
+	}
 	public void mergeSlot(Slot slot,int invnum){
 		int max = this.inv.getInventoryStackLimit();
 		ItemStack is = slot.getStack();
@@ -145,6 +216,19 @@ public class InventoryHandler {
 		}
 		return Optional.of(list.get(0));
 	}
+
+//	public OptionalInt getFirstMergeableSlot(ItemStack other){
+//		if(other.isStackable()){
+//			for(int i=0;i<this.inv.getSizeInventory();i++){
+//				if(ItemUtil.isItemStackPresent(this.inv.getStackInSlot(i))){
+//					ItemStack stack = this.inv.getStackInSlot(i);
+//					if(stack.isItemEqual(other) && stack.stackSize<64){
+//
+//					}
+//				}
+//			}
+//		}
+//	}
 	public Optional<Integer> getFirstEmptySlotNum(){
 		for(int i=0;i<this.inv.getSizeInventory();i++){
 			if(this.inv.getStackInSlot(i)==null){
@@ -633,13 +717,21 @@ public class InventoryHandler {
 		protected ItemStack is;
 		protected int number;
 		protected IInventory parent;
+		protected EntityEquipmentSlot slot;
 
 		public InventoryStatus(int number,ItemStack is,IInventory inv){
 			this.number = number;
 			this.is = is;
 			this.parent = inv;
+			this.slot = EntityEquipmentSlot.MAINHAND;
 		}
 
+		/** can use only armorinventory*/
+		public EntityEquipmentSlot getEquipmentSlot(){
+			int num = MathHelper.clamp_int(number, 0, 3);
+			java.util.Optional<EntityEquipmentSlot> rt =  Lists.newArrayList(EntityEquipmentSlot.values()).stream().filter(slot -> slot.getSlotIndex()==num).findFirst();
+			return rt.isPresent() ? rt.get() : null;
+		}
 		public ItemStack getStack(){
 			return is;
 

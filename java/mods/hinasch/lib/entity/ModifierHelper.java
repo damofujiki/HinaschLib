@@ -34,6 +34,7 @@ public class ModifierHelper {
 		}
 		return false;
 	}
+
 	@Deprecated
 	public static void removeModifier(ItemStack is,IAttribute attribute,AttributeModifier modifier,EntityEquipmentSlot slot){
 		if(is.getAttributeModifiers(slot).containsEntry(attribute.getAttributeUnlocalizedName(), modifier)){

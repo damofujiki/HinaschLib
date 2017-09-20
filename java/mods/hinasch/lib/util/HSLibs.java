@@ -7,7 +7,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
@@ -18,10 +20,14 @@ import org.lwjgl.input.Keyboard;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import io.netty.buffer.ByteBuf;
 import mods.hinasch.lib.DebugLog;
+import mods.hinasch.lib.client.IGuiAttribute;
+import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.iface.IIntSerializable;
+import mods.hinasch.lib.network.PacketOpenGui;
 import mods.hinasch.lib.primitive.Tuple;
 import mods.hinasch.lib.world.XYZPos;
 import net.minecraft.block.Block;
@@ -45,7 +51,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -55,6 +64,8 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 
@@ -81,6 +92,16 @@ public class HSLibs {
 	public static final EnumFacing[] AROUND = {EnumFacing.SOUTH,EnumFacing.NORTH,EnumFacing.DOWN,EnumFacing.UP,EnumFacing.DOWN,EnumFacing.UP};
 
 
+	public static final ComparatorRL SORT_RESOURCE_LOCATION = new ComparatorRL();
+
+	public static class ComparatorRL implements Comparator<ResourceLocation>{
+
+		@Override
+		public int compare(ResourceLocation o1, ResourceLocation o2) {
+			return String.CASE_INSENSITIVE_ORDER.compare(o1.getResourcePath(), o2.getResourcePath());
+		}
+
+	}
 	/**
 	 * InputEvent.KeyInputEvent
 	 * @param event
@@ -122,6 +143,11 @@ public class HSLibs {
 	}
 
 
+
+	@SideOnly(Side.CLIENT)
+	public static void openGuiFromClient(IGuiAttribute gui,XYZPos pos,NBTTagCompound... args){
+		HSLib.core().getPacketDispatcher().sendToServer(PacketOpenGui.create(gui, pos, args));
+	}
 
 //	public static EnumParticleTypes addEnumParticleType(String enumName,String pName,String pID,boolean par3){
 //		return EnumHelper.add(EnumParticleTypes.class, enumName, pName,pID,par3);
@@ -429,6 +455,27 @@ public class HSLibs {
 		return flag1 && flag2 && flag3;
 	}
 
+	public static Set<EntityPlayer> findPlayerFromBatllers(DamageSource ds,EntityLivingBase victim){
+		if(victim instanceof EntityPlayer){
+			if(ds.getEntity() instanceof EntityPlayer){
+				return Sets.newHashSet((EntityPlayer) ds.getEntity(),(EntityPlayer)victim);
+			}else{
+				return Sets.newHashSet((EntityPlayer) victim);
+			}
+
+		}
+		if(ds.getEntity() instanceof EntityPlayer){
+			return Sets.newHashSet((EntityPlayer) ds.getEntity());
+		}
+
+		return Sets.newHashSet();
+	}
+
+	public static void broadcastToPlayers(Set<EntityPlayer> eps,String mes){
+		for(EntityPlayer ep:eps){
+			ChatHandler.sendChatToPlayer(ep, mes);
+		}
+	}
 	public static float getEntityAttackDamage(EntityLivingBase living){
 		return (float)living.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
 	}
@@ -647,7 +694,7 @@ public class HSLibs {
 
 	public static void log(String par1,boolean debug){
 		if(debug){
-			System.out.println(par1);
+			HSLib.logger.trace(par1);
 
 		}
 	}
@@ -695,6 +742,9 @@ public class HSLibs {
 		return aabb;
 	}
 
+	public static String joinCollection(Collection<?> col,String d){
+		return col.stream().map(obj -> obj.toString()).collect(Collectors.joining(d));
+	}
 	public static boolean isEnemy(Entity par1,Entity player){
 		if(par1!=player && !(par1 instanceof EntityTameable) && !(par1 instanceof INpc)){
 			if(par1 instanceof EntityLivingBase){
@@ -732,16 +782,6 @@ public class HSLibs {
 		MinecraftForge.EVENT_BUS.register(par1);
 	}
 
-	/**
-	 * コンフィグ・コマンドなどのコア機能についてのイベントはこれで登録。
-	 * 	 * @param par1
-	 *<br>
-	 * registerEventと今は変わらないのでこっちにかえる
-	 */
-	@Deprecated
-	public static void registerCoreEvent(Object par1){
-		FMLCommonHandler.instance().bus().register(par1);
-	}
 
 	/**
 	 * NBTにセーブするタイプのcapabilityは必ずpreinitでやること。
